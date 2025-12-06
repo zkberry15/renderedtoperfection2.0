@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { supabase } from "./supabaseClient"
+import NanoBananaEditor from "./NanoBananaEditor" // ✅ your real app
 
 type SupabaseUser = {
   id: string
   email?: string
 }
 
-export default function App() {
+function App() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -30,6 +31,7 @@ export default function App() {
     }
   }, [])
 
+  // LOADING
   if (loading) {
     return (
       <div style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
@@ -38,6 +40,7 @@ export default function App() {
     )
   }
 
+  // NOT LOGGED IN
   if (!user) {
     return (
       <div style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
@@ -48,12 +51,7 @@ export default function App() {
               options: { redirectTo: window.location.origin },
             })
           }
-          style={{
-            padding: "12px 24px",
-            borderRadius: 30,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
+          style={{ padding: "12px 24px", borderRadius: 30, cursor: "pointer" }}
         >
           Sign in with Google
         </button>
@@ -61,49 +59,51 @@ export default function App() {
     )
   }
 
+  // ✅ LOGGED IN — SHOW FULL APP
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <div>
       {/* TOP BAR */}
       <div
         style={{
           width: "100%",
-          padding: "12px 20px",
+          padding: "10px 20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          background: "white",
           boxShadow: "0 1px 6px rgba(0,0,0,0.1)",
           position: "sticky",
           top: 0,
-          zIndex: 999,
+          background: "white",
+          zIndex: 1000,
         }}
       >
-        <div>
+        <div style={{ fontSize: 14 }}>
           Signed in as <strong>{user.email}</strong>
         </div>
 
         <button
           onClick={async () => {
             await supabase.auth.signOut()
-            window.location.href = window.location.origin
+            window.location.reload()
           }}
           style={{
-            padding: "8px 18px",
+            padding: "8px 16px",
             borderRadius: 20,
             border: "none",
-            fontWeight: 600,
             cursor: "pointer",
+            fontWeight: 600,
           }}
         >
           Logout
         </button>
       </div>
 
-      {/* APP BODY */}
-      <div style={{ padding: 40 }}>
-        Your Nano Banana app is now protected and working properly.
-      </div>
+      {/* ✅ YOUR REAL NANO BANANA APP BELOW */}
+      <NanoBananaEditor />
     </div>
   )
 }
+
+export default App
+
 
